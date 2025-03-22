@@ -1,0 +1,20 @@
+image,query,output,timestamp
+.gradio\flagged\image\ec3bd7c1887c5366d5e6\Screenshot 2023-03-09 014447.png,show me customer ID,,2025-03-18 23:20:31.145073
+,,"The most relevant part of the text based on the query ""show me the content in Discover"" is:
+
+Screening Process
+1 Aptitude & Technical Assessment
+Fill out our online application form.
+2 Automated & Live technical Interview
+3 Final Interview & Document verification",2025-03-19 16:31:35.721705
+.gradio\flagged\image\6dcea491071aaa663e40\Screenshot 2024-06-10 084632.png,how much percent is correct,"The text extracted from the image includes the following details:
+
+- Name: Jathin mup
+- Country: India
+- Gender: male
+- Post Code: 517591
+- Date of Birth: 04/01/2003
+- State: Andhra Pradesh
+- Address: nindra{mandal},chittoor(dist)
+
+The text also mentions ""Please confirm the following information is 100% correct. You will not be able to edit it in future!"" indicating the need for confirmation that the details provided are accurate.",2025-03-22 22:37:40.606094
