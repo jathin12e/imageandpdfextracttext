@@ -44,7 +44,7 @@ def extract_text_from_pdf(pdf_path):
     except Exception as e:
         return f"Error processing PDF: {str(e)}"
 
-# Function to generate responses using OpenAI's ChatCompletion
+# Function to generate responses using OpenAI's ChatCompletion with GPT-3.5-Turbo
 def query_gpt(extracted_text, query):
     """Query GPT with extracted text and a user prompt."""
     if not openai.api_key:
@@ -62,7 +62,7 @@ def query_gpt(extracted_text, query):
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Change model if needed
+            model="gpt-3.5-turbo",  # Using GPT-3.5 Turbo
             messages=[
                 {"role": "system", "content": "You are a helpful AI assistant."},
                 {"role": "user", "content": prompt}
@@ -70,7 +70,12 @@ def query_gpt(extracted_text, query):
             temperature=0.3,
             max_tokens=500
         )
-        return response.choices[0].message.content.strip()
+
+        # Safely access the response content
+        if 'choices' in response and len(response['choices']) > 0:
+            return response['choices'][0]['message']['content'].strip()
+        else:
+            return "Error: No choices returned in the response. Check your API or query."
     except Exception as e:
         return f"Error in AI processing: {str(e)}"
 
