@@ -14,7 +14,7 @@ load_dotenv()
 # Retrieve OpenRouter API key
 api_key = os.getenv("OPENROUTER_API_KEY")
 if not api_key:
-    raise ValueError("❌ Missing OpenRouter API Key. Please check your .env file.")
+    raise ValueError("❌ Missing OpenRouter API Key. Please check your environment variables or .env file.")
 
 # Set OpenAI API key and base URL for OpenRouter
 openai.api_key = api_key
@@ -47,6 +47,9 @@ def extract_text_from_pdf(pdf_path):
 # Function to generate responses using OpenAI's ChatCompletion
 def query_gpt(extracted_text, query):
     """Query GPT with extracted text and a user prompt."""
+    if not openai.api_key:
+        return "Error: OpenAI API Key is missing. Please configure it properly."
+
     prompt = f"""
     You are an AI assistant trained to answer questions based on the provided document or image.
     Here is the extracted text from the input:
@@ -134,4 +137,4 @@ with gr.Blocks() as demo:
 
 # Run the Gradio app
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", server_port=int(os.environ.get("PORT", 8080)))
+    demo.launch()
