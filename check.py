@@ -62,7 +62,7 @@ def query_gpt(extracted_text, query):
 
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-4-turbo",  # Change model if needed
+            model="gpt-3.5-turbo",  # Change model if needed
             messages=[
                 {"role": "system", "content": "You are a helpful AI assistant."},
                 {"role": "user", "content": prompt}
