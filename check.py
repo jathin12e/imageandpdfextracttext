@@ -142,4 +142,5 @@ with gr.Blocks() as demo:
 
 # Run the Gradio app
 if __name__ == "__main__":
-    demo.launch()
+     port = int(os.getenv("PORT", 8000))  # Use the assigned port or default to 8000
+     demo.launch(server_name="0.0.0.0", server_port=port)
