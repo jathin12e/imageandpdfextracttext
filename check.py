@@ -3,7 +3,7 @@ import pytesseract
 from PIL import Image
 import numpy as np
 import fitz  # PyMuPDF
-import openai
+import cohere
 import gradio as gr
 import os
 from dotenv import load_dotenv
@@ -11,17 +11,16 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-# Retrieve OpenRouter API key
-api_key = os.getenv("OPENROUTER_API_KEY")
+# Retrieve Cohere API key
+api_key = os.getenv("COHERE_API_KEY")
 if not api_key:
-    raise ValueError("❌ Missing OpenRouter API Key. Please check your environment variables or .env file.")
+    raise ValueError("❌ Missing Cohere API Key. Please check your environment variables or .env file.")
 
-# Set OpenAI API key and base URL for OpenRouter
-openai.api_key = api_key
-openai.api_base = "https://openrouter.ai/api/v1"
+# Initialize Cohere client
+cohere_client = cohere.Client(api_key)
 
 # Set Tesseract Path (Update this path if needed)
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+pytesseract.pytesseract.tesseract_cmd = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
 
 # Function to extract text from an image
 def extract_text_from_image(image):
@@ -44,12 +43,9 @@ def extract_text_from_pdf(pdf_path):
     except Exception as e:
         return f"Error processing PDF: {str(e)}"
 
-# Function to generate responses using OpenAI's ChatCompletion with GPT-3.5-Turbo
-def query_gpt(extracted_text, query):
-    """Query GPT with extracted text and a user prompt."""
-    if not openai.api_key:
-        return "Error: OpenAI API Key is missing. Please configure it properly."
-
+# Function to generate responses using Cohere's Chat API
+def query_cohere(extracted_text, query):
+    """Query Cohere's Chat API with extracted text and a user prompt."""
     prompt = f"""
     You are an AI assistant trained to answer questions based on the provided document or image.
     Here is the extracted text from the input:
@@ -61,27 +57,19 @@ def query_gpt(extracted_text, query):
     """
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # Using GPT-3.5 Turbo
-            messages=[
-                {"role": "system", "content": "You are a helpful AI assistant."},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.3,
-            max_tokens=500
+        response = cohere_client.chat(
+            message=prompt,  # The input message for the chat API
+            chat_history=[]  # Start a new session for each query
         )
 
-        # Safely access the response content
-        if 'choices' in response and len(response['choices']) > 0:
-            return response['choices'][0]['message']['content'].strip()
-        else:
-            return "Error: No choices returned in the response. Check your API or query."
+        # Access the generated response text
+        return response.text.strip()
     except Exception as e:
         return f"Error in AI processing: {str(e)}"
 
 # Function to process input for both PDF and Image files
 def process_input(file, query):
-    """Process PDF or image file and query GPT."""
+    """Process PDF or image file and query Cohere."""
     if file is None:
         return "Please upload a file."
 
@@ -104,7 +92,7 @@ def process_input(file, query):
     if extracted_text == "No readable text found in the image.":
         return "No text found in the uploaded file. Try uploading a clearer file."
 
-    return query_gpt(extracted_text, query)
+    return query_cohere(extracted_text, query)
 
 # Function to preview the uploaded image immediately
 def preview_image(file):
