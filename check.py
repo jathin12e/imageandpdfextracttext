@@ -7,6 +7,7 @@ import cohere
 import gradio as gr
 import os
 from dotenv import load_dotenv
+from pyngrok import ngrok
 
 # Load environment variables from .env file
 load_dotenv()
@@ -128,6 +129,8 @@ with gr.Blocks() as demo:
         outputs=response_output
     )
 
-# Run the Gradio app
+# Run the Gradio app with Ngrok for public URL
 if __name__ == "__main__":
-    demo.launch()
+    public_url = ngrok.connect(7860)  # Expose port 7860
+    print(f"Public URL: {public_url}")
+    demo.launch(server_port=7860)
